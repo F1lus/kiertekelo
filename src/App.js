@@ -17,7 +17,7 @@ function App() {
   const handleChange = useCallback(event => {
     event.preventDefault()
 
-    if(event.target.files[0] || !event.target.files[0].name.endsWith('.txt')) return
+    if (!event.target.files[0] || !event.target.files[0].name.endsWith('.txt')) return
 
     const reader = new FileReader()
     reader.onload = async e => {
@@ -25,7 +25,7 @@ function App() {
 
       const helyesstring = "<helyes>";
 
-      const splitted = filedata.split("EZATUTIELVALASZTO").map(x => x.split("\n").filter(x => x.length > 1));
+      const splitted = filedata.split("VALASZTO").map(x => x.split("\n").filter(x => x.length > 1));
       const feladatok = [];
 
       splitted.forEach(elem => {
@@ -33,15 +33,15 @@ function App() {
         temp["Q"] = elem[0]
         temp["A"] = []
         elem.forEach((elem2, i) => {
-          if(i === 0) return
+          if (i !== 0) {
+            const helyes = elem2.endsWith(helyesstring)
+            if (helyes) elem2 = elem2.substring(0, elem2.length - helyesstring.length)
 
-          const helyes = elem2.endsWith(helyesstring)
-          if (helyes) elem2 = elem2.substring(0, elem2.length - helyesstring.length)
-
-          const valasz = {}
-          valasz["nev"] = elem2
-          valasz["helyes"] = helyes
-          temp["A"].push(valasz)
+            const valasz = {}
+            valasz["nev"] = elem2
+            valasz["helyes"] = helyes
+            temp["A"].push(valasz)
+          }
         })
         feladatok.push(temp)
       })
@@ -70,6 +70,11 @@ function App() {
   const renderTest = useCallback(() => {
     if (test.length > 0) {
 
+      const handleSubmit = e => {
+        e.preventDefault()
+        setShowResult(true)
+      }
+
       return (<div>
         {
           test.map((obj, index) => {
@@ -80,7 +85,13 @@ function App() {
                   {obj.A.map((answer, j) => {
                     return (
                       <li key={j} className="center-box">
-                        <Checkbox name={answer.nev} handleChange={handleAnswer} current={{ qKey: index, key: j }} />
+                        <Checkbox 
+                          name={answer.nev} 
+                          handleChange={handleAnswer} 
+                          current={{ qKey: index, key: j }} 
+                          reveal={showResult}
+                          isCorrect={answer.helyes}
+                        />
                       </li>
                     )
                   })}
@@ -99,10 +110,6 @@ function App() {
       return <h1 className="center">Még nincs kiválasztott fájl!</h1>
     }
   }, [test, showResult])
-
-  const handleSubmit = (e) => {
-    setShowResult(true)
-  }
 
   const renderResult = useCallback(() => {
 
@@ -128,10 +135,47 @@ function App() {
         })
       })
 
+      let guard = 0
+
+      test.forEach((question) => {
+
+        question.A.forEach(answer => {
+
+          if(answer.helyes){
+            document.getElementsByClassName('checker')[guard++].classList.add('bg-correct')
+          }else{
+            guard++
+          }
+
+        }) 
+
+      })
+
+      const handleClick = e => {
+        e.preventDefault()
+    
+        const tmp = test
+        tmp.sort(() => 0.5 - Math.random())
+        tmp.forEach(obj => {
+          obj.A.sort(() => 0.5 - Math.random())
+        })
+
+        for(const elem of document.getElementsByClassName("checker")){
+          elem.classList.remove('check-bg')
+          elem.classList.remove("bg-correct")
+          elem.classList.remove("bg-error")
+        }
+
+        answers.current = []
+        setShowResult(false)
+        setTest([])
+        setTest(tmp)
+      }
+
       return (
         <div className="position-relative">
-          <h5 className="center">Az eredmény: {points} / {maxPoints}</h5>
-
+          <h2 className="center">Az eredmény: {points} / {maxPoints}</h2>
+          <button className="center-button" onClick={handleClick}>Újraindítás</button>
         </div>
       )
     }

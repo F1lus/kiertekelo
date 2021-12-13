@@ -39,6 +39,7 @@ ul{
   background: #c0c0c0;
   color: black;
   font-weight: bold;
+  border: 3px solid rgb(255, 196, 0);
 }
 
 .center{
@@ -57,4 +58,14 @@ ul{
   position: absolute;
   left:50%;
   transform: translate(-50%, 0%);
+}
+
+.bg-correct{
+  background: rgb(18, 207, 18);
+  color: black;
+  font-weight: bold;
+}
+
+.bg-error{
+  background: rgb(177, 25, 25);
 }

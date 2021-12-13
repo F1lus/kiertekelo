@@ -1,4 +1,4 @@
-export default function Checkbox({ handleChange, name, current }) {
+export default function Checkbox({ handleChange, name, current, isCorrect, reveal }) {
 
     function handleClick(event) {
         event.preventDefault()
@@ -10,7 +10,7 @@ export default function Checkbox({ handleChange, name, current }) {
 
 
     return (
-        <div className="checker" id="this" onClick={handleClick}>
+        <div className="checker" onClick={handleClick}>
             <input type="checkbox" id="check" />
             {name}
         </div>
