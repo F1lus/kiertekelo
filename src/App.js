@@ -91,8 +91,6 @@ function App() {
                           name={answer.nev} 
                           handleChange={handleAnswer} 
                           current={{ qKey: index, key: j }} 
-                          reveal={showResult}
-                          isCorrect={answer.helyes}
                         />
                       </li>
                     )
@@ -113,21 +111,45 @@ function App() {
     }
   }, [test, showResult])
 
+  const handleClick = useCallback(e => {
+    e.preventDefault()
+
+    const tmp = test
+    tmp.sort(() => 0.5 - Math.random())
+    tmp.forEach(obj => obj.A.sort(() => 0.5 - Math.random()))
+
+    for(const elem of document.getElementsByClassName("checker")){
+      elem.classList.remove('check-bg')
+      elem.classList.remove("bg-correct")
+      elem.classList.remove("bg-error")
+
+      elem.firstChild.checked = false
+    }
+
+    answers.current = []
+
+    setShowResult(false)
+    setTest([])
+    setTest(tmp)
+  }, [test])
+
   const renderResult = useCallback(() => {
 
     if (showResult) {
       let points = 0
       let maxPoints = 0
 
+      console.log(answers.current)
+
       answers.current.forEach(obj => {
         if (test[obj.qKey].A[obj.key].helyes) {
           points++
         } else {
-          if (points > 0) {
-            points--;
-          }
+          points--
         }
       })
+
+      if(points < 0) points = 0
 
       test.forEach(q => {
         q.A.forEach(answer => {
@@ -153,27 +175,6 @@ function App() {
 
       })
 
-      const handleClick = e => {
-        e.preventDefault()
-    
-        const tmp = test
-        tmp.sort(() => 0.5 - Math.random())
-        tmp.forEach(obj => {
-          obj.A.sort(() => 0.5 - Math.random())
-        })
-
-        for(const elem of document.getElementsByClassName("checker")){
-          elem.classList.remove('check-bg')
-          elem.classList.remove("bg-correct")
-          elem.classList.remove("bg-error")
-        }
-
-        answers.current = []
-        setShowResult(false)
-        setTest([])
-        setTest(tmp)
-      }
-
       return (
         <div className="position-relative">
           <h2 className="center">Az eredmény: {points} / {maxPoints}</h2>
@@ -182,7 +183,7 @@ function App() {
       )
     }
 
-  }, [showResult, test])
+  }, [showResult, test, handleClick])
 
   return (
     <div>

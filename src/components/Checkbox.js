@@ -1,4 +1,4 @@
-export default function Checkbox({ handleChange, name, current, isCorrect, reveal }) {
+export default function Checkbox({ handleChange, name, current }) {
 
     function handleClick(event) {
         event.preventDefault()
