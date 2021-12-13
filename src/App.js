@@ -34,6 +34,8 @@ function App() {
         temp["A"] = []
         elem.forEach((elem2, i) => {
           if (i !== 0) {
+            elem2.trim()
+
             const helyes = elem2.endsWith(helyesstring)
             if (helyes) elem2 = elem2.substring(0, elem2.length - helyesstring.length)
 
