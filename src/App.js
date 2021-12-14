@@ -17,7 +17,18 @@ function App() {
   const handleChange = useCallback(event => {
     event.preventDefault()
 
-    if (!event.target.files[0] || !event.target.files[0].name.endsWith('.txt')) return
+    if (!event.target.files[0] || !event.target.files[0].name.endsWith('.txt')){
+      document.getElementById('file_label').innerHTML = 'A fájl nem .txt kiterjesztésű!'
+
+      setTest([])
+      setShowResult(false)
+
+      answers.current = []
+
+      return
+    }
+
+    document.getElementById('file_label').innerHTML = `Jelenlegi fájl: ${event.target.files[0].name}`
 
     const reader = new FileReader()
     reader.onload = async e => {
@@ -102,7 +113,7 @@ function App() {
         {
           !showResult ? (
             <div className="position-relative">
-              <button className="center-button" onClick={handleSubmit}>Beadás</button>
+              <button className="center-button btn" onClick={handleSubmit}>Beadás</button>
             </div>) : null
         }
       </div>)
@@ -176,9 +187,9 @@ function App() {
       })
 
       return (
-        <div className="position-relative">
+        <div className="position-relative end-margin">
           <h2 className="center">Az eredmény: {points} / {maxPoints}</h2>
-          <button className="center-button" onClick={handleClick}>Újraindítás</button>
+          <button className="center-button btn" onClick={handleClick}>Újraindítás</button>
         </div>
       )
     }
@@ -189,7 +200,8 @@ function App() {
     <div>
 
       <div className="fileupload">
-        <input type="file" onChange={handleChange} />
+        <label for="file_up" id="file_label" className="btn">Fájl feltöltése</label>
+        <input id="file_up" type="file" onChange={handleChange} />
       </div>
 
       {renderTest()}
